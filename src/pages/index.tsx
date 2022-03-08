@@ -1,13 +1,20 @@
-import { Flex, SimpleGrid, Button, Skeleton } from "@chakra-ui/react";
+import { Flex, SimpleGrid, Image, Button, Text, Badge, Stack, HStack, Heading } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useCallback, useState } from "react";
 
 import { Header } from "../components/Header";
-import { Pokemon } from "../components/Pokemon";
+import { PokemonList } from "../components/Pokemon/PokemonList";
 import { SearchBox } from "../components/SearchBox";
 
 import { api } from "../services/api";
+import { configPokemons } from "../services/utils/configPokemons";
+
+interface HomeProps {
+  initialPokemons: IPokemon[],
+  initialNextPage: string,
+  count: number,
+}
 
 interface IApiResponse {
   count: number;
@@ -16,18 +23,22 @@ interface IApiResponse {
   results: IPokemon[]
 }
 
-interface HomeProps {
-  initialPokemons: IPokemon[],
-  initialNextPage: string,
-  count: number,
-}
-
 export interface IPokemon {
   id: string;
   name: string;
   url: string;
   gif_url: string;
   image_url: string;
+  types: ITypes[];
+}
+
+interface ITypes {
+  slot: number;
+  type: {
+    name: string;
+    url: string;
+  }
+  color: string;
 }
 
 export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
@@ -40,40 +51,12 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
 
     const { next, results } = data;
 
-    const newPokemons = results.map(pokemon => {
-      const id = pokemon.url.split('/')[6].padStart(3, '0')
-
-      return {
-        id: `Nº ${id}`,
-        name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
-        url: pokemon.url,
-        gif_url: `https://projectpokemon.org/images/normal-sprite/${pokemon.name}.gif`,
-        image_url: `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id}.png`,
-      }
-    })
+    const newPokemons = await configPokemons(results)
 
     setNextPage(next);
     setPokemons([...pokemons, ...newPokemons]);
 
   }, [nextPage, pokemons]);
-
-  // useEffect(() => {
-  //   const handleScroll = async () => {
-  //     setIsPageEnd(window.innerHeight + window.scrollY >= document.body.offsetHeight)
-
-  //     if (isPageEnd) {
-  //       const path = nextPage.split('/')[5]
-  //       const response = await api.get(path);
-  //       console.log(response);
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // });
 
   return (
     <>
@@ -84,17 +67,28 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
       <Flex direction="column" padding="6">
         <Header />
 
-        <Flex direction="column" w="100%" maxW={1200} mx="auto">
-          <SearchBox />
+        <Flex w="100%" maxW={1200} mx="auto" justify="space-between">
+          <Flex direction="column" flex="1" maxWidth={800} mt="8">
+            <SearchBox />
+            <PokemonList pokemons={pokemons} loadPokemons={loadPokemons} />
+          </Flex>
 
-          <SimpleGrid columns={3} spacing="4" minChildWidth={200} maxWidth={800} mt="8">
-            {pokemons?.map(pokemon => (
-              <Pokemon key={pokemon.name} pokemon={pokemon} />
-            ))}
-            <Flex direction="column" align="center" justify="space-evenly" height="36" bg="white" borderRadius="full" boxShadow="lg" rounded="lg">
-              <Button colorScheme='teal' size='md' onClick={() => loadPokemons()}>Button</Button>
-            </Flex>
-          </SimpleGrid>
+          <Flex sx={{ position: 'sticky', top: '120', }} ml="8" direction="column" align="center" height="2xl" minWidth={350} bg="white" mt="32" borderRadius="16">
+            <Image mt="-32" boxSize={64} src="https://assets.pokemon.com/assets/cms2/img/pokedex/full//188.png" alt="pokemon" />
+            <Text># 395</Text>
+            <Text>Empoleon</Text>
+            <HStack spacing="4">
+              <Badge>Ground</Badge>
+              <Badge>Water</Badge>
+            </HStack>
+            <Heading as="h3" size="sm">Pokedéx Entry</Heading>
+            <Text width="64">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem veniam odit at? Non consequuntur.</Text>
+            <Heading as="h3" size="sm">ABILITIES</Heading>
+            <HStack spacing="4">
+              <Badge>Ground</Badge>
+              <Badge>Water</Badge>
+            </HStack>
+          </Flex>
         </Flex>
       </Flex>
     </>
@@ -104,20 +98,9 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
 export const getServerSideProps: GetServerSideProps = async () => {
   const response = await api.get("pokemon")
 
-  const { count, next, results } = response.data
+  const { count, next, results } = response.data as IApiResponse
 
-
-  const initialPokemons = results.map(pokemon => {
-    const id = pokemon.url.split('/')[6].padStart(3, '0')
-
-    return {
-      id: `Nº ${id}`,
-      name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
-      url: pokemon.url,
-      gif_url: `https://projectpokemon.org/images/normal-sprite/${pokemon.name}.gif`,
-      image_url: `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id}.png`,
-    }
-  })
+  const initialPokemons = await configPokemons(results)
 
   return {
     props: {
