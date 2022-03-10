@@ -1,4 +1,4 @@
-import { IPokemon } from "../../pages"
+import { IPokemon } from "../../models/IPokemon"
 import { api } from "../api"
 import { typeColors } from "./typeColors"
 
@@ -8,7 +8,7 @@ export const configPokemons = async (results: IPokemon[]) => {
     
     const response = await api.get(`pokemon/${pokemon.name}`)
 
-    const { types } = response.data
+    const { types, abilities, stats } = response.data
 
     const formattedTypes = types.map(type => {
       return {
@@ -24,6 +24,8 @@ export const configPokemons = async (results: IPokemon[]) => {
       gif_url: `https://projectpokemon.org/images/normal-sprite/${pokemon.name}.gif`,
       image_url: `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id}.png`,
       types: formattedTypes,
+      abilities,
+      stats
     }
   }))
 

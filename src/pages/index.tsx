@@ -1,11 +1,14 @@
-import { Flex, SimpleGrid, Image, Button, Text, Badge, Stack, HStack, Heading } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useCallback, useState } from "react";
 
 import { Header } from "../components/Header";
+import { PokemonInfo } from "../components/Pokemon/PokemonInfo";
+import { PokemonInfoDrawer } from "../components/Pokemon/PokemonInfoDrawer";
 import { PokemonList } from "../components/Pokemon/PokemonList";
 import { SearchBox } from "../components/SearchBox";
+import { IPokemon } from "../models/IPokemon";
 
 import { api } from "../services/api";
 import { configPokemons } from "../services/utils/configPokemons";
@@ -23,25 +26,8 @@ interface IApiResponse {
   results: IPokemon[]
 }
 
-export interface IPokemon {
-  id: string;
-  name: string;
-  url: string;
-  gif_url: string;
-  image_url: string;
-  types: ITypes[];
-}
-
-interface ITypes {
-  slot: number;
-  type: {
-    name: string;
-    url: string;
-  }
-  color: string;
-}
-
 export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
+  const [pokemon, setPokemon] = useState<IPokemon>(initialPokemons[0]);
   const [pokemons, setPokemons] = useState<IPokemon[]>(initialPokemons);
   const [nextPage, setNextPage] = useState(initialNextPage);
 
@@ -58,6 +44,10 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
 
   }, [nextPage, pokemons]);
 
+  const handleSelectPokemon = useCallback((pokemon: IPokemon) => {
+    setPokemon(pokemon);
+  }, [])
+
   return (
     <>
       <Head>
@@ -70,25 +60,10 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
         <Flex w="100%" maxW={1200} mx="auto" justify="space-between">
           <Flex direction="column" flex="1" maxWidth={800} mt="8">
             <SearchBox />
-            <PokemonList pokemons={pokemons} loadPokemons={loadPokemons} />
+            <PokemonList pokemons={pokemons} loadPokemons={loadPokemons} handleSelectPokemon={handleSelectPokemon} />
           </Flex>
 
-          <Flex sx={{ position: 'sticky', top: '120', }} ml="8" direction="column" align="center" height="2xl" minWidth={350} bg="white" mt="32" borderRadius="16">
-            <Image mt="-32" boxSize={64} src="https://assets.pokemon.com/assets/cms2/img/pokedex/full//188.png" alt="pokemon" />
-            <Text># 395</Text>
-            <Text>Empoleon</Text>
-            <HStack spacing="4">
-              <Badge>Ground</Badge>
-              <Badge>Water</Badge>
-            </HStack>
-            <Heading as="h3" size="sm">Pokedéx Entry</Heading>
-            <Text width="64">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem veniam odit at? Non consequuntur.</Text>
-            <Heading as="h3" size="sm">ABILITIES</Heading>
-            <HStack spacing="4">
-              <Badge>Ground</Badge>
-              <Badge>Water</Badge>
-            </HStack>
-          </Flex>
+          <PokemonInfoDrawer pokemon={pokemon} />
         </Flex>
       </Flex>
     </>

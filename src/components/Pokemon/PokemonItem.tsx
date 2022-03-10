@@ -1,11 +1,13 @@
 import { Badge, Flex, HStack, Image, Text } from "@chakra-ui/react";
-import { IPokemon } from "../../pages";
+
+import { IPokemon } from "../../models/IPokemon";
 
 interface PokemonProps {
   pokemon: IPokemon
+  handleSelectPokemon: (pokemon: IPokemon) => void;
 }
 
-export function PokemonItem({ pokemon }: PokemonProps) {
+export function PokemonItem({ pokemon, handleSelectPokemon }: PokemonProps) {
   return (
     <Flex
       as="button"
@@ -19,6 +21,7 @@ export function PokemonItem({ pokemon }: PokemonProps) {
       rounded="lg"
       transition="all 0.2s"
       _hover={{ transform: "scale(1.05)", filter: "brightness(0.95)" }}
+      onClick={() => handleSelectPokemon(pokemon)}
     >
       <Image boxSize="24" objectFit="contain" src={pokemon?.image_url} alt={pokemon.name} />
       <Text>{pokemon.id}</Text>
