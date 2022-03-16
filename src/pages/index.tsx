@@ -1,17 +1,17 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, useBreakpointValue } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useCallback, useState } from "react";
 
 import { Header } from "../components/Header";
-import { PokemonInfo } from "../components/Pokemon/PokemonInfo";
 import { PokemonInfoDrawer } from "../components/Pokemon/PokemonInfoDrawer";
 import { PokemonList } from "../components/Pokemon/PokemonList";
 import { SearchBox } from "../components/SearchBox";
+import { usePokemonDrawer } from "../contexts/PokemonDrawerContext";
 import { IPokemon } from "../models/IPokemon";
 
 import { api } from "../services/api";
-import { configPokemons } from "../services/utils/configPokemons";
+import { configPokemons } from "../utils/configPokemons";
 
 interface HomeProps {
   initialPokemons: IPokemon[],
@@ -31,6 +31,13 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
   const [pokemons, setPokemons] = useState<IPokemon[]>(initialPokemons);
   const [nextPage, setNextPage] = useState(initialNextPage);
 
+  const { onOpen } = usePokemonDrawer()
+
+  const isPokemonSidebar = useBreakpointValue({
+    base: true,
+    lg: false,
+  })
+
   const loadPokemons = useCallback(async () => {
     const path = nextPage.split('/')[5]
     const { data } = await api.get<IApiResponse>(path);
@@ -46,7 +53,9 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
 
   const handleSelectPokemon = useCallback((pokemon: IPokemon) => {
     setPokemon(pokemon);
-  }, [])
+
+    isPokemonSidebar && onOpen();
+  }, [isPokemonSidebar, onOpen]);
 
   return (
     <>

@@ -14,11 +14,6 @@ export function PokemonDrawerProvider({ children }: PokemonDrawerProviderProps) 
   const disclosure = useDisclosure()
   const router = useRouter()
 
-  useEffect(() => {
-    disclosure.onClose()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.asPath])
-
   return (
     <PokemonDrawerContext.Provider value={disclosure}>
       {children}

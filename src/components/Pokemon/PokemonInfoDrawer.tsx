@@ -11,12 +11,12 @@ interface PokemonInfoDrawerProps {
 export function PokemonInfoDrawer({ pokemon }: PokemonInfoDrawerProps) {
   const { isOpen, onClose } = usePokemonDrawer()
 
-  const isDrawerSidebar = useBreakpointValue({
+  const isPokemonSidebar = useBreakpointValue({
     base: true,
     lg: false,
   })
 
-  if (isDrawerSidebar) {
+  if (isPokemonSidebar) {
     return (
       <Drawer isOpen={isOpen} placement="right" size="md" onClose={onClose}>
         <DrawerOverlay>

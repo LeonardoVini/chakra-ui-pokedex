@@ -11,7 +11,7 @@ interface PokemonListProps {
 
 export function PokemonList({ pokemons, loadPokemons, handleSelectPokemon }: PokemonListProps) {
   return (
-    <SimpleGrid columns={3} spacing="4" minChildWidth={250} mt="8">
+    <SimpleGrid columns={3} spacing="4" minChildWidth={200} mt="8">
       {pokemons?.map(pokemon => (
         <PokemonItem key={pokemon.name} pokemon={pokemon} handleSelectPokemon={handleSelectPokemon} />
       ))}
