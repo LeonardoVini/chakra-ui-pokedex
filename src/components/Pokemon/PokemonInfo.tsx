@@ -32,7 +32,7 @@ export function PokemonInfo({ pokemon }: PokemonInfoProps) {
       <Heading as="h3" fontSize={"16"} mt="4">POKEDÉX ENTRY</Heading>
       <Text width={300} textAlign="center" mt="2" fontWeight="semibold">{pokemon.flavor_text}</Text>
 
-      <Heading as="h3" fontSize={"16"} mt="4">ABILITIES</Heading>
+      <Heading as="h3" fontSize={"16"} mt="4">ABILITIES dggdg</Heading>
       <SimpleGrid columns={pokemon.abilities.length >= 2 ? 2 : 1} spacing="4" mt="4">
         {pokemon.abilities.map(item => (
           <Badge key={item.ability.name} borderRadius="full" variant="outline" bg="gray.50" fontWeight={700} textAlign="center" width="32" p="2">
