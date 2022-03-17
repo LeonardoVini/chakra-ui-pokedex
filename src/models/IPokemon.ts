@@ -18,6 +18,7 @@ export interface IPokemon {
 }
 
 interface IEvolutionChain {
+  min_level: number;
   species_name: string;
   image_url: string;
   gif_url: string;

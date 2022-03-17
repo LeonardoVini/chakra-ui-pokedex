@@ -1,4 +1,4 @@
-import { Flex, HStack, Image, Badge, Text, Heading, CircularProgress, CircularProgressLabel, SimpleGrid, Icon, theme } from "@chakra-ui/react";
+import { Flex, HStack, Image, Badge, Text, Heading, CircularProgress, CircularProgressLabel, SimpleGrid, Icon, theme, Tag } from "@chakra-ui/react";
 
 import { IPokemon } from "../../models/IPokemon";
 
@@ -16,14 +16,7 @@ export function PokemonInfo({ pokemon }: PokemonInfoProps) {
   console.log(pokemon.evolution_chain);
 
   return (
-    // <Flex sx={{ position: 'sticky', top: '120' }} ml="8" direction="column" align="center" height="3xl" minWidth={400} bg="white" mt="32" borderRadius="16">
-    <Flex position="relative" ml="8" direction="column" align="center" height="fit-content" minWidth={400} bg="white" mt="32" borderRadius="16">
-      {/* <Flex position="absolute" left="6" top="6" direction="column" fontSize="12">
-        <Text>Baby {pokemon.is_baby && <Icon as={BsCheckCircle} />}</Text>
-        <Text>Legendary {pokemon.is_legendary && <Icon as={BsCheckCircle} />}</Text>
-        <Text>Mythical {pokemon.is_mythical && <Icon as={BsCheckCircle} />}</Text>
-      </Flex> */}
-      
+    <Flex ml="8" direction="column" align="center" height="fit-content" minWidth={400} bg="white" mt="32" borderRadius="16">
       <Image mt="-32" boxSize="64" src={pokemon.image_url} alt={pokemon.name} />
       
       <Text color="gray.400" mt="4">{pokemon.id}</Text>
@@ -103,17 +96,35 @@ export function PokemonInfo({ pokemon }: PokemonInfoProps) {
         )) }
       </SimpleGrid>
 
-      { pokemon.evolution_chain.length >= 2 && (
+      { pokemon.evolution_chain.length === 2 && (
         <>
           <Heading as="h3" fontSize={"16"} mt="4">EVOLUTION</Heading>
           <HStack>
-            {pokemon.evolution_chain.map(item => (
-              <Image key={item.species_name} src={item.image_url} alt={item.species_name} boxSize="16" />
-            )) }
+            <Image src={pokemon.evolution_chain[0].image_url} alt={pokemon.evolution_chain[0].species_name} boxSize="16" />
+            <Badge borderRadius="full" variant="outline" bg="gray.50" fontWeight={700} textTransform={"lowercase"} textAlign="center" width="16">
+              Lvl {pokemon.evolution_chain[1].min_level}
+            </Badge>
+            <Image src={pokemon.evolution_chain[1].image_url} alt={pokemon.evolution_chain[1].species_name} boxSize="16" />
           </HStack>
         </>
       )}
-      
+
+      { pokemon.evolution_chain.length === 3 && (
+        <>
+          <Heading as="h3" fontSize={"16"} mt="4">EVOLUTION</Heading>
+          <HStack>
+            <Image src={pokemon.evolution_chain[0].image_url} alt={pokemon.evolution_chain[0].species_name} boxSize="16" />
+            <Badge borderRadius="full" variant="outline" bg="gray.50" fontWeight={700} textTransform={"lowercase"} textAlign="center" width="16">
+              Lvl {pokemon.evolution_chain[1].min_level}
+            </Badge>
+            <Image src={pokemon.evolution_chain[1].image_url} alt={pokemon.evolution_chain[1].species_name} boxSize="16" />
+            <Badge borderRadius="full" variant="outline" bg="gray.50" fontWeight={700} textTransform={"lowercase"} textAlign="center" width="16">
+              Lvl {pokemon.evolution_chain[2].min_level}
+            </Badge>
+            <Image src={pokemon.evolution_chain[2].image_url} alt={pokemon.evolution_chain[2].species_name} boxSize="16" />
+          </HStack>
+        </>
+      )}
     </Flex>
   )
 }

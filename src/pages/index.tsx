@@ -64,7 +64,7 @@ export default function Home({ initialPokemons, initialNextPage }: HomeProps) {
       </Head>
 
       <Flex direction="column" padding="6">
-        <Header />
+        {/* <Header /> */}
 
         <Flex w="100%" maxW={1200} mx="auto" justify="space-between">
           <Flex direction="column" flex="1" maxWidth={800} mt="8">
